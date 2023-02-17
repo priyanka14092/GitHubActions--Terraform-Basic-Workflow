@@ -1,2 +1,2 @@
 # GitHubActions-TerraformBasic
-Create resources in AWS using GitHub Actions.
+This repository contains GitHub Actions Workflow to create and destroy AWS EC2 and S3 resources.
