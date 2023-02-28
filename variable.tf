@@ -6,7 +6,7 @@ variable "instance-Type" {
 }
 
 variable "instanceNames" {
-  type = list(any)
+  type = string #(any)
   description = "Enter EC2 Instance Name: "
 }
 
