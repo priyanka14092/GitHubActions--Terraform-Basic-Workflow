@@ -15,7 +15,7 @@ on:
 
 env:
   aws-region: ${{ github.event.inputs.tagRegion }}
-  aws_s3_bucket: demo-bucket
+  aws_s3_bucket: demo-bucket-auto-tagging
   tfstate_file: terraform.tfstate
  # db_table: dynamo-table
 
