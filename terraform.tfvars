@@ -3,7 +3,7 @@
 instance-Type = "t2.micro"
 
 # EC2 Instance Name
-instanceNames = ["priyanka-instance1"]#, "priyanka-instance2", "priyanka-instance3", "priyanka-instance4"]
+instanceNames = "priyanka-instance1" #["priyanka-instance1"]#, "priyanka-instance2", "priyanka-instance3", "priyanka-instance4"]
 
 # S3 Bucket Name
 bucketNames = {
