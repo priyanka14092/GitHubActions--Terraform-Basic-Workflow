@@ -2,7 +2,7 @@
 resource "aws_instance" "myInstance" {
   #count         = length(var.instanceNames)
   ami           = "ami-05fa00d4c63e32376"
-  instance_type = var.instance-Typ
+  instance_type = var.instance-Type
   tags = {
     Name    = var.instanceNames#[count.index]
     Owner   = "Priyanka"
