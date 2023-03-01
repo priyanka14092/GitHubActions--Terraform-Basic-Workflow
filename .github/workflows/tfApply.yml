@@ -73,8 +73,15 @@ jobs:
 #           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
 
       - name: terraform plan
+        id: plan
         run: 
           terraform plan
+        continue-on-error: true
+      
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run:
+          exit 1
 
   terraformApply:
     name: terraApply
