@@ -45,6 +45,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
       
+      -  name: Setup Remote state
+         run: |
+          chmod +x setup-remote-state.sh
+          ./setup-remote-state.sh $aws_s3_bucket
+      
       - name: terraform init
         run: 
           terraform init -reconfigure -backend-config="bucket=$aws_s3_bucket" -backend-config="key=$tfstate_file"
