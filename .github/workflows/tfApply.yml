@@ -15,7 +15,7 @@ on:
 
 env:
   aws-region: ${{ github.event.inputs.tagRegion }}
-  aws_s3_bucket: demo-bucket-auto-tagging-new
+  aws_s3_bucket: arn:aws:s3::676634049556:accesspoint/m4meqzhqxca1a.mrap
   tfstate_file: terraform.tfstate
  # db_table: dynamo-table
 
