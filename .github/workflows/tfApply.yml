@@ -1,173 +1,52 @@
-name: Terraform-Apply-Tags
+name: GitHub Actions--Terraform-Apply
 
 on:
   workflow_dispatch:
-    inputs:
-      tagRegion:
-        description: 'Choose Region:'
-        required: true
-        #default: 'eu-central-1'
-        type: choice
-        options:
-        - us-east-1
-        - us-west-1
-        - ap-south-1
 
 env:
-  aws-region: ${{ github.event.inputs.tagRegion }}
-  aws_s3_bucket: demo-bucket-auto-tagging-new #arn:aws:s3::676634049556:accesspoint/m4meqzhqxca1a.mrap
-  tfstate_file: terraform.tfstate
- # db_table: dynamo-table
+  aws-region: us-east-1
+  aws_s3_bucket: priyanka-backend-bucket
+  tfstate_file: terraState.tfstate
+  db_table: priyanka-dynamo-table
 
 jobs:
   terraformInit:
     name: terraInit
     runs-on: ubuntu-latest
-    # strategy:
-    #   matrix:
-    #     aws-region: ${{ github.event.inputs.tagRegion }}
     
     steps:
       - name: checkout
         uses: actions/checkout@v3
 
-      - name: Terraform HashiCorp SetUp
+      - name: Terraform HasiCorp SetUp
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.3.8
+          terraform_version: 1.2.6
 
       - name: AWS Credentials Configuration
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ env.aws-region }}
-          # aws-region: ${{ matrix.aws-region }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
       
+      - name: terraform format
+        run: 
+          terraform fmt
       
       - name: terraform init
         run: 
-          terraform init -reconfigure -backend-config="bucket=$aws_s3_bucket" -backend-config="key=$tfstate_file"
+          terraform init -reconfigure -backend-config="bucket=$aws_s3_bucket" -backend-config="key=$tfstate_file" -backend-config="dynamodb_table=$db_table"
 
-#   terraformPlan:
-#     name: terraPlan
-#     needs: terraformInit
-#     runs-on: ubuntu-latest
-    
-#     steps:
-#       - name: checkout
-#         uses: actions/checkout@v3
-
-#       - name: Terraform HashiCorp SetUp
-#         uses: hashicorp/setup-terraform@v2
-#         with:
-#           terraform_version: 1.3.8
-
-#       - name: AWS Credentials Configuration
-#         uses: aws-actions/configure-aws-credentials@v1
-#         with:
-#           aws-region: ${{ env.aws-region }}
-#           # aws-region: ${{ matrix.aws-region }}
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+      - name: terraform validate
+        run: 
+          terraform validate
 
       - name: terraform plan
-        id: plan
         run: 
           terraform plan
-        continue-on-error: true
-      
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run:
-          exit 1
 
-  terraformApply:
-    name: terraApply
-    needs: [terraformInit]# terraformPlan]
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - name: Terraform HashiCorp SetUp
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.3.8
-
-      - name: AWS Credentials Configuration
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: ${{ env.aws-region }}
-          # aws-region: ${{ matrix.aws-region }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-
-      - name: terraform init
-        run: 
-          terraform init -reconfigure -backend-config="bucket=$aws_s3_bucket" -backend-config="key=$tfstate_file"
-    
       - name: terraform apply
         run: 
           terraform apply -auto-approve
-
-#       - name: terraform destroy
-#         run: 
-#           terraform destroy -auto-approve
-
-# name: GitHub Actions--Terraform-Apply
-
-# on:
-#   workflow_dispatch:
-
-# env:
-#   aws-region: us-east-1
-#   aws_s3_bucket: priyanka-backend-bucket
-#   tfstate_file: terraState.tfstate
-#   db_table: priyanka-dynamo-table
-
-# jobs:
-#   terraformInit:
-#     name: terraInit
-#     runs-on: ubuntu-latest
-    
-#     steps:
-#       - name: checkout
-#         uses: actions/checkout@v3
-
-#       - name: Terraform HasiCorp SetUp
-#         uses: hashicorp/setup-terraform@v2
-#         with:
-#           terraform_version: 1.2.6
-
-#       - name: AWS Credentials Configuration
-#         uses: aws-actions/configure-aws-credentials@v1
-#         with:
-#           aws-region: ${{ env.aws-region }}
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-      
-#       - name: terraform format
-#         run: 
-#           terraform fmt
-      
-#       - name: terraform init
-#         run: 
-#           terraform init -reconfigure -backend-config="bucket=$aws_s3_bucket" -backend-config="key=$tfstate_file" -backend-config="dynamodb_table=$db_table"
-
-#       - name: terraform validate
-#         run: 
-#           terraform validate
-
-#       - name: terraform plan
-#         run: 
-#           terraform plan
-
-#       - name: terraform apply
-#         run: 
-#           terraform apply -auto-approve
